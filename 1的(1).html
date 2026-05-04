@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>山口庄村 · 乡村振兴官网</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        :root {
+            --green: #2E7D32;
+            --red: #E53935;
+            --gray: #555;
+            --light: #f8f9fa;
+        }
+        body {
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        /* 导航 吸顶高亮 */
+        nav {
+            background: #ffffff;
+            padding: 16px 30px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        nav a {
+            text-decoration: none;
+            color: #444;
+            font-weight: 500;
+            font-size: 15px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        nav a.active,
+        nav a:hover {
+            color: #fff;
+            background: var(--green);
+        }
+
+        /* 板块通用 */
+        .section {
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 20px;
+        }
+        .section h2 {
+            text-align: center;
+            font-size: 32px;
+            color: var(--green);
+            margin-bottom: 50px;
+            position: relative;
+            font-weight: bold;
+        }
+
+        /* 滚动淡入动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 首屏轮播 圆角+居中不撑满+无缝 */
+        .slider-container {
+        width: 92%;
+        max-width: 1200px;
+        height: 600px;
+        margin: 0 auto; /* 居中显示，不撑满全屏 */
+        overflow: hidden;
+        border-radius: 0 0 20px 20px; /* 底部圆角 */
+        position: relative;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1); /* 加一点阴影，更有层次 */
+        }
+        .slider {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 丝滑动画曲线 */
+        }
+        .slide {
+        min-width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        }
+        .slide::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 1;
+        }
+        .slide-text {
+        position: relative;
+        z-index: 2;
+        color: white;
+        text-align: center;
+        }
+        .slide-text h1 {
+        font-size: 36px;
+        margin-bottom: 12px;
+        font-weight: bold;
+        }
+        .slide-text p {
+        font-size: 17px;
+        margin-bottom: 26px;
+        }
+        .slide-btn {
+        display: inline-block;
+        padding: 12px 28px;
+        background: #E53935;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        margin: 0 8px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+        }
+        .slide-btn:hover {
+        background: #c62828;
+        }
+        .slider-dots {
+        position: absolute;
+        bottom: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 9;
+        }
+        .slider-dot {
+        width: 12px;
+        height: 12px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        }
+        .slider-dot.active {
+        background: #E53935;
+        transform: scale(1.2); /* 激活点放大，更有反馈感 */
+        }
+        
+        /* 村庄概况 图文布局 */
+        .about-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+        .about-img {
+            flex: 1;
+            min-width: 280px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .about-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .about-text {
+            flex: 1.2;
+            min-width: 280px;
+            font-size: 16px;
+            color: var(--gray);
+        }
+        .about-text p {
+            margin-bottom: 16px;
+        }
+
+        /* 产业卡片样式 */
+        .card-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: #fff;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .card-img {
+            width: 100%;
+            height: 160px;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+        .card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .card h3 {
+            color: var(--green);
+            margin-bottom: 12px;
+        }
+
+        /* 四季活动卡片 */
+        .season-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        .season-card:hover {
+            transform: translateY(-5px);
+        }
+        .season-img {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+        .season-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .season-text {
+            padding: 18px;
+            text-align: center;
+        }
+        .season-text h3 {
+            margin: 0 0 10px;
+            color: #2E7D32;
+        }
+        .season-text p {
+            margin: 0;
+            font-size: 15px;
+            color: #555;
+        }
+
+        /* 产业联动样式 */
+        .link-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            align-items: center;
+        }
+        .link-text {
+            flex: 1.2;
+            min-width: 280px;
+        }
+        .link-item {
+            background: #f8fff8;
+            border-left: 4px solid var(--green);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            border-radius: 0 8px 8px 0;
+        }
+        .link-item h4 {
+            color: var(--green);
+            margin-bottom: 6px;
+            font-size: 18px;
+        }
+        .link-item p {
+            margin: 0;
+            font-size: 16px;
+            color: var(--gray);
+        }
+        .link-image {
+            flex: 1;
+            min-width: 280px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .link-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* IP文创板块 */
+        .ip-section {
+            background: linear-gradient(135deg, #f8fff8 0%, #fff5f5 100%);
+            padding: 60px 20px;
+            border-radius: 20px;
+        }
+        .ip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+        }
+        .ip-image {
+            flex: 1;
+            min-width: 280px;
+            text-align: center;
+        }
+        .ip-image img {
+            width: 260px;
+            height: auto;
+            border-radius: 16px;
+            box-shadow: 8px 8px 20px rgba(0,0,0,0.1);
+        }
+        .ip-text {
+            flex: 1.5;
+            min-width: 280px;
+        }
+        .ip-text h3 {
+            color: var(--green);
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        .craft-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+        .craft-card {
+            background: white;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .craft-card p {
+            margin-top: 8px;
+            font-size: 15px;
+            color: var(--gray);
+        }
+
+        /* 底部美化 */
+        .footer-section {
+            background: var(--green);
+            color: #fff;
+            padding: 50px 20px 30px;
+            margin-top: 60px;
+            border-radius: 20px 20px 0 0;
+        }
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .footer-col h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            padding-bottom: 8px;
+        }
+        .footer-col p {
+            color: rgba(255,255,255,0.85);
+            margin: 10px 0;
+            font-size: 15px;
+        }
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+
+        .season-slider {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+        border-radius: 12px 12px 0 0;
+        }
+        .season-slide {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1.2s ease;
+        }
+        .season-slide:first-child {
+        opacity: 1;
+        }
+
+        /* IP文创精美卡片样式 */
+        .craft-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .craft-card {
+            background: #fff;
+            padding: 24px 16px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .craft-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .craft-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+        .craft-card h4 {
+            margin: 0 0 8px;
+            color: #2E7D32;
+            font-size: 18px;
+        }
+        .craft-card p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 已删除惠农共富 -->
+    <nav>
+        <a href="#home" class="active">首页</a>
+        <a href="#about">村庄概况</a>
+        <a href="#industry">产业布局</a>
+        <a href="#link">产业联动</a>
+        <a href="#season">四季活动</a>
+        <a href="#ip">村庄IP</a>
+        <a href="#contact">联系我们</a>
+    </nav>
+
+    <!-- 首屏轮播（已修复路径问题） -->
+<div class="slider-container" id="home">
+    <div class="slider" id="slider">
+        <div class="slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/1XKUxLxh.png')"></div>
+        <div class="slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/BQOmR5Of.png')">
+            <div class="slide-text">
+                <h1>山口庄村 · 乡村振兴共富实践</h1>
+                <p>山口红了 · 产业联动 · 生态共富</p>
+                <div>
+                    <a href="#about" class="slide-btn">村庄概况</a>
+                    <a href="#industry" class="slide-btn">产业布局</a>
+                </div>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/UKYPlGlZ.png')">
+            <div class="slide-text">
+                <h1>智慧农业 · 科技赋能田园</h1>
+                <p>番茄种植 · 方舱菌菇 · 绿色有机</p>
+                <div>
+                    <a href="#link" class="slide-btn">套票体系</a>
+                    <a href="#ip" class="slide-btn">文创IP</a>
+                </div>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/1XKUxLxh.png')">
+            <div class="slide-text">
+                <h1>星空露营 · 京郊微度假目的地</h1>
+                <p>亲子研学 · 企业团建 · 田园休闲</p>
+                <div>
+                    <a href="#season" class="slide-btn">四季活动</a>
+                    <a href="#contact" class="slide-btn">联系我们</a>
+                </div>
+            </div>
+        </div>
+        <div class="slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/BQOmR5Of.png')"></div>
+    </div>
+    <div class="slider-dots">
+        <span class="slider-dot active" onclick="goToSlide(0)"></span>
+        <span class="slider-dot" onclick="goToSlide(1)"></span>
+        <span class="slider-dot" onclick="goToSlide(2)"></span>
+    </div>
+</div>
+
+ <!-- 村庄概况（加图升级版） -->
+<section class="section fade-in" id="about">
+    <h2>山口庄村 —— 京郊生态长寿村</h2>
+    
+    <!-- 左边图片 + 右边文字 布局 -->
+    <div style="display: flex; flex-wrap: wrap; gap: 30px; max-width: 1000px; margin: 0 auto; align-items: center;">
+        
+        <!-- 左侧图片 -->
+        <div style="flex: 1; min-width: 280px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <img src="https://s3.bmp.ovh/2026/05/04/vcOlJeOt.png" alt="山口庄村概况" style="width:100%; height:auto; display:block;">
+        </div>
+        
+        <!-- 右侧文字 -->
+        <div style="flex: 1.2; min-width: 280px; line-height: 1.9; font-size: 16px;">
+            <p>📍 <strong>区位优势</strong>：位于密云区河南寨镇，距京承高速仅3公里，北京城区45分钟直达，属于1小时都市微度假圈。</p>
+            <p>🌳 <strong>生态禀赋</strong>：森林覆盖率高，天然氧吧；拥有200米深层高锶低钠矿泉水；长寿人口比例远超普通村庄。</p>
+            <p>🏅 <strong>人文荣誉</strong>：首都文明村、先进基层党组织、五星级党支部，世代农耕，民风淳朴。</p>
+        </div>
+    </div>
+</section>
+
+    <!-- 产业布局 完整保留 -->
+    <section class="section fade-in" id="industry">
+        <h2>一核两翼三链条 · 全产业链融合</h2>
+        <div class="card-box">
+            <div class="card">
+                <div class="card-img">
+                    <img src="https://s3.bmp.ovh/2026/05/04/CQo3lX00.png" alt="宓山纪农场">
+                </div>
+                <h3>宓山纪农场</h3>
+                <p>智慧农业、番茄主题、采摘研学、方舱菌菇种植，绿色有机生产体系。</p>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="https://s3.bmp.ovh/2026/05/04/8eyFezTm.png" alt="东方绿洲露营庄园">
+                </div>
+                <h3>东方绿洲露营</h3>
+                <p>星空露营、亲子研学、企业团建、夜间经济，打造全季微度假目的地。</p>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="https://s3.bmp.ovh/2026/05/04/ZyKo0j7r.png" alt="山口饮料厂">
+                </div>
+                <h3>山口饮料厂</h3>
+                <p>高锶矿泉水、赛冰品牌、健康饮用水，优质水源赋能全村产业。</p>
+            </div>
+            <div class="card">
+                <div class="card-img">
+                    <img src="https://s3.bmp.ovh/2026/05/04/zPqUUSpG.png" alt="林下经济">
+                </div>
+                <h3>林下经济</h3>
+                <p>板栗、林菌、林药、生态养殖，立体循环，绿色增收。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 产业联动 已改成：套票+客流 -->
+    <section class="section fade-in" id="link">
+        <h2>从“各自为战”到“客流互通”</h2>
+        <div class="link-container">
+            <div class="link-text">
+                <div class="link-item">
+                    <h4>全域套票体系</h4>
+                    <p>整合农场采摘、星空露营、生态研学等业态，推出通用套票与主题套票，一站式游玩消费，拉长游客停留时间。</p>
+                </div>
+                <div class="link-item">
+                    <h4>业态客流互通</h4>
+                    <p>农场为露营输送客源，露营带动农产品与文创消费，各业态相互导流，形成内部客流闭环。</p>
+                </div>
+                <div class="link-item">
+                    <h4>区位引流赋能</h4>
+                    <p>依托近郊区位优势吸纳城市客流，以套票绑定多产业资源，降低宣传成本，实现整体效益提升。</p>
+                </div>
+            </div>
+            <div class="link-image">
+                <img src="https://s3.bmp.ovh/2026/05/04/jphFGXpp.png" alt="产业联动套票客流示意图">
+            </div>
+        </div>
+    </section>
+
+    <!-- 四季活动 完整保留 -->
+<section class="section fade-in" id="season">
+  <h2>四季有景 · 四季可游玩</h2>
+  <div class="card-box">
+
+    <!-- 春季 -->
+    <div class="season-card">
+      <div class="season-slider" id="springSlider">
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/v5uxlK0m.png')"></div>
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/5MOJAknh.jpg')"></div>
+      </div>
+      <div class="season-text">
+        <h3>春 · 柿不可挡·春耕季</h3>
+        <p>番茄领养、共享菜园、春耕开犁节</p>
+      </div>
+    </div>
+
+    <!-- 夏季 -->
+    <div class="season-card">
+      <div class="season-slider" id="summerSlider">
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/2Eztkphw.png')"></div>
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/1KtC1cwc.png')"></div>
+      </div>
+      <div class="season-text">
+        <h3>夏 · 星空一夏·露营季</h3>
+        <p>星空音乐节、露天电影、田园烧烤</p>
+      </div>
+    </div>
+
+    <!-- 秋季 -->
+    <div class="season-card">
+      <div class="season-slider" id="autumnSlider">
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/HCYqxAu6.png')"></div>
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/mLHjUIfz.jpg')"></div>
+      </div>
+      <div class="season-text">
+        <h3>秋 · 丰收之秋·采摘季</h3>
+        <p>番茄王争霸、板栗采摘、农夫市集</p>
+      </div>
+    </div>
+
+    <!-- 冬季 -->
+    <div class="season-card">
+      <div class="season-slider" id="winterSlider">
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/U6wQZjgI.png')"></div>
+        <div class="season-slide" style="background-image: url('https://s3.bmp.ovh/2026/05/04/eDqKt535.jpg')"></div>
+      </div>
+      <div class="season-text">
+        <h3>冬 · 暖意融融·暖冬季</h3>
+        <p>围炉煮茶、草莓采摘、长寿康养体验</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+    <!-- 村庄IP 新增文创购买 完整保留样式 -->
+    <!-- 村庄IP 升级为精美卡片版 -->
+<section class="section fade-in ip-section" id="ip">
+    <h2>山口有福 · 一口幸福</h2>
+    <div class="ip-container">
+        <div class="ip-image">
+            <img src="https://s3.bmp.ovh/2026/05/04/P9v39mol.png" alt="IP形象-口福">
+        </div>
+        <div class="ip-text">
+            <h3>IP形象：口福 —— 山口庄村守护精灵</h3>
+            <p><strong>IP释义：</strong></p>
+            <p>🍅 <strong>口</strong> = 舌尖美味、山泉好物、生态食材</p>
+            <p>❤️ <strong>福</strong> = 长寿康养、田园生活、乡村振兴</p>
+            <p style="margin-top:15px;">
+                依托村庄IP衍生系列文创周边，打造乡村特色消费场景，把田园好物与IP故事带回家。
+            </p>
+
+            <!-- 升级为精美卡片布局 -->
+            <div class="craft-box">
+                <div class="craft-card">
+                    <div class="craft-icon">🍅</div>
+                    <h4>福小番</h4>
+                    <p>番茄主题文创周边</p>
+                </div>
+                <div class="craft-card">
+                    <div class="craft-icon">⛺</div>
+                    <h4>福小野</h4>
+                    <p>露营户外系列好物</p>
+                </div>
+                <div class="craft-card">
+                    <div class="craft-icon">💧</div>
+                    <h4>福小泉</h4>
+                    <p>山泉伴手礼礼盒</p>
+                </div>
+                <div class="craft-card">
+                    <div class="craft-icon">🎁</div>
+                    <h4>IP纪念文创</h4>
+                    <p>文旅纪念手作</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <!-- 底部 -->
+    <section class="footer-section" id="contact">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>山口庄村</h3>
+                <p>京郊生态长寿村</p>
+                <p>乡村振兴共富实践示范村</p>
+            </div>
+            <div class="footer-col">
+                <h3>联系我们</h3>
+                <p>📍 北京市密云区河南寨镇山口庄村</p>
+                <p>📞 文旅套票合作 研学团建咨询</p>
+            </div>
+            <div class="footer-col">
+                <h3>业务范围</h3>
+                <p>全域套票预订 | 亲子研学团建</p>
+                <p>IP文创购买 | 乡村文旅合作</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            ©2026 山口庄村 乡村振兴项目官网 | 山口红了 · 产业联动 · 四季活动
+        </div>
+    </section>
+
+    <!-- 轮播无缝JS -->
+    <script>
+        const slider = document.getElementById("slider");
+        const dots = document.querySelectorAll(".slider-dot");
+        const totalSlides = 3;
+        let currentSlide = 1;
+        let isAnimating = false;
+
+        slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+        function updateSlider(noTransition = false) {
+            if (noTransition) {
+                slider.style.transition = "none";
+            } else {
+                slider.style.transition = "transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)";
+            }
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+            let dotIndex = currentSlide - 1;
+            if (dotIndex < 0) dotIndex = totalSlides - 1;
+            if (dotIndex >= totalSlides) dotIndex = 0;
+            dots.forEach((dot, i) => {
+                dot.classList.toggle("active", i === dotIndex);
+            });
+        }
+
+        function goToSlide(index) {
+            if (isAnimating) return;
+            isAnimating = true;
+            currentSlide = index + 1;
+            updateSlider();
+            setTimeout(() => { isAnimating = false; }, 800);
+        }
+
+        setInterval(() => {
+            if (isAnimating) return;
+            isAnimating = true;
+            currentSlide++;
+            updateSlider();
+
+            if (currentSlide === totalSlides + 1) {
+                setTimeout(() => {
+                    currentSlide = 1;
+                    updateSlider(true);
+                }, 800);
+            }
+            setTimeout(() => { isAnimating = false; }, 800);
+        }, 4000);
+    </script>
+
+    <!-- 滚动淡入 -->
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                }
+            });
+        });
+        document.querySelectorAll('.section').forEach(el => observer.observe(el));
+    </script>
+
+    <!-- 导航滚动高亮 -->
+    <script>
+        const sections = document.querySelectorAll("section");
+        const navLinks = document.querySelectorAll("nav a");
+        window.addEventListener("scroll", () => {
+            let current = "";
+            sections.forEach((section) => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute("id");
+                }
+            });
+            navLinks.forEach((link) => {
+                link.classList.remove("active");
+                if (link.getAttribute("href").includes(current)) {
+                    link.classList.add("active");
+                }
+            });
+        });
+    </script>
+
+    <!-- 四季自动轮播JS（放在页面最底部JS区域） -->
+    <script>
+    function startSeasonSlider(id) {
+    const slider = document.getElementById(id);
+    const slides = slider.querySelectorAll(".season-slide");
+    let index = 0;
+    setInterval(() => {
+        slides[index].style.opacity = 0;
+        index = (index + 1) % slides.length;
+        slides[index].style.opacity = 1;
+    }, 3000);
+    }
+    startSeasonSlider("springSlider");
+    startSeasonSlider("summerSlider");
+    startSeasonSlider("autumnSlider");
+    startSeasonSlider("winterSlider");
+    </script>
+
+</body>
+</html>
